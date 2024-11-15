@@ -1,0 +1,28 @@
+context rebrain {
+    _X. => {
+        NoOp();
+        Set(ACTUALDID=${SIP_HEADER(To)});
+        Set(CALLFILENAME=${EXTEN}-${STRFTIME(${EPOCH},,%Y%m%d-%H%M%S)}-${UNIQUEID}.gsm);
+        Set(DESTINATION=${EXTEN});
+        Progress();
+        Set(CALLERID(all)=79268530630);
+        MixMonitor(${CALLFILENAME});
+        Dial(SIP/provider/8${EXTEN:1});
+        Hangup();
+    }
+
+    _810. => Hangup();
+
+    _7954X. => Goto(blocked,s,1);
+
+    _810. => Goto(blocked,s,1);
+
+    _7800. => Goto(blocked,s,1);
+}
+
+context blocked {
+    s => {
+        Playback(cityandmobile);
+        Hangup();
+    }
+}
